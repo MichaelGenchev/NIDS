@@ -8,28 +8,37 @@ import (
 )
 
 
-func Parse(packet gopacket.Packet) error {
+
+func Parse(packet gopacket.Packet) (Packet, error ){
 
 	ethernetLayer := packet.Layer(layers.LayerTypeEthernet)
 	if ethernetLayer == nil {
-		return fmt.Errorf("nil ethernet layer")
+		return Packet{}, fmt.Errorf("nil ethernet layer")
 	}
 	ethernet := ethernetLayer.(*layers.Ethernet)
 
 	// Extract the IP layer 
 	ipLayer := packet.Layer(layers.LayerTypeIPv4)
 	if ipLayer == nil {
-		return fmt.Errorf("nil ip layer")
+		return Packet{}, fmt.Errorf("nil ip layer")
 	}
 	ip := ipLayer.(*layers.IPv4)
 
 	tcpLayer := packet.Layer(layers.LayerTypeTCP)
 	if tcpLayer == nil {
-		return fmt.Errorf("nil tcp layer") 
+		return Packet{}, fmt.Errorf("nil tcp layer") 
 	}
 	tcp := tcpLayer.(*layers.TCP)
 
 	// Print the packet information
+	currPacket := Packet{
+		SourceMac: ethernet.SrcMAC.String(),
+		DestinationMac: ethernet.DstMAC.String(),
+		SourceIP: ip.SrcIP.String(),
+		DestinationIP: ip.DstIP.String(),
+		SourcePort: tcp.SrcPort.String(),
+		DestinationPort: tcp.DstPort.String(),
+	}
 
 	fmt.Printf("Source MAC: %s\n", ethernet.SrcMAC)
 	fmt.Printf("Destination MAC: %s\n", ethernet.DstMAC)
@@ -38,5 +47,5 @@ func Parse(packet gopacket.Packet) error {
 	fmt.Printf("Source Port: %d\n", tcp.SrcPort)
 	fmt.Printf("Destination Port: %d\n", tcp.DstPort)
 	fmt.Println()
-	return nil
+	return currPacket, nil
 }
