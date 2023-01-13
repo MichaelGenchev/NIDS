@@ -1,6 +1,4 @@
 package sbd
 
-
-type SignatureBasedDetection struct{
-	
+type SignatureBasedDetection struct {
 }

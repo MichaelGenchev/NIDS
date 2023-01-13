@@ -1,8 +1,5 @@
 package sbd
 
-
-
-type Signature struct{
+type Signature struct {
 	Severity int
-
 }

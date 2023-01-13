@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/gopacket"
@@ -8,26 +9,31 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	ErrIPLayer          = errors.New("ipLayer is nil")
+	ErrTransportLayer   = errors.New("transport layer is nil")
+	ErrApplicationLayer = errors.New("application layer is nil")
+)
 
 func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
-    var packetInfo PacketInfo
-    // Extract packet timestamp
-    packetInfo.Timestamp = packet.Metadata().Timestamp.String()
+	var packetInfo PacketInfo
+	// Extract packet timestamp
+	packetInfo.Timestamp = packet.Metadata().Timestamp.String()
 
-    // Extract packet IP layer
-    ipLayer := packet.Layer(layers.LayerTypeIPv4)
-    if ipLayer == nil {
-		return nil, fmt.Errorf("nil ipLayer")
+	// Extract packet IP layer
+	ipLayer := packet.Layer(layers.LayerTypeIPv4)
+	if ipLayer == nil {
+		return nil, ErrIPLayer
 	}
 	ip := ipLayer.(*layers.IPv4)
 	packetInfo.SrcIP = ip.SrcIP.String()
 	packetInfo.DstIP = ip.DstIP.String()
 	packetInfo.Protocol = ip.Protocol.String()
 
-    // Extract packet transport layer
-    transportLayer := packet.TransportLayer()
-    if transportLayer == nil {
-		return nil, fmt.Errorf("nil transport layer")
+	// Extract packet transport layer
+	transportLayer := packet.TransportLayer()
+	if transportLayer == nil {
+		return nil, ErrTransportLayer
 	}
 	switch transportLayer.LayerType() {
 	case layers.LayerTypeTCP:
@@ -40,10 +46,10 @@ func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
 		packetInfo.DstPort = fmt.Sprintf("%d", udp.DstPort)
 	}
 
-    // Extract packet payload
-    applicationLayer := packet.ApplicationLayer()
-    if applicationLayer == nil {
-		return nil, fmt.Errorf("nil applicationLayer")
+	// Extract packet payload
+	applicationLayer := packet.ApplicationLayer()
+	if applicationLayer == nil {
+		return nil, ErrApplicationLayer
 	}
 	packetInfo.Payload = applicationLayer.Payload()
 	packetInfo.PayloadLenght = len(applicationLayer.Payload())
@@ -52,5 +58,5 @@ func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
 		return nil, err
 	}
 	packetInfo.ID = int(requestID.ID())
-    return &packetInfo, nil
+	return &packetInfo, nil
 }

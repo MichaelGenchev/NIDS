@@ -1,10 +1,9 @@
 package capturer
 
-
 import (
 	"fmt"
-	"time"
 	"log"
+	"time"
 
 	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/google/gopacket"
@@ -33,6 +32,6 @@ func Capture() {
 		}
 		fmt.Println(parsedPacked)
 		// fmt.Println(packet)
-		time.Sleep(10 *time.Second)
+		time.Sleep(10 * time.Second)
 	}
 }
