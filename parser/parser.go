@@ -8,44 +8,40 @@ import (
 )
 
 
+func ParsePacket(packet gopacket.Packet) *PacketInfo {
+    var packetInfo PacketInfo
+    // Extract packet timestamp
+    packetInfo.Timestamp = packet.Metadata().Timestamp.String()
 
-func Parse(packet gopacket.Packet) (Packet, error ){
+    // Extract packet IP layer
+    ipLayer := packet.Layer(layers.LayerTypeIPv4)
+    if ipLayer != nil {
+        ip := ipLayer.(*layers.IPv4)
+        packetInfo.SrcIP = ip.SrcIP.String()
+        packetInfo.DstIP = ip.DstIP.String()
+        packetInfo.Protocol = ip.Protocol.String()
+    }
 
-	ethernetLayer := packet.Layer(layers.LayerTypeEthernet)
-	if ethernetLayer == nil {
-		return Packet{}, fmt.Errorf("nil ethernet layer")
-	}
-	ethernet := ethernetLayer.(*layers.Ethernet)
+    // Extract packet transport layer
+    transportLayer := packet.TransportLayer()
+    if transportLayer != nil {
+        switch transportLayer.LayerType() {
+        case layers.LayerTypeTCP:
+            tcp := transportLayer.(*layers.TCP)
+            packetInfo.SrcPort = fmt.Sprintf("%d", tcp.SrcPort)
+            packetInfo.DstPort = fmt.Sprintf("%d", tcp.DstPort)
+        case layers.LayerTypeUDP:
+            udp := transportLayer.(*layers.UDP)
+            packetInfo.SrcPort = fmt.Sprintf("%d", udp.SrcPort)
+            packetInfo.DstPort = fmt.Sprintf("%d", udp.DstPort)
+        }
+    }
 
-	// Extract the IP layer 
-	ipLayer := packet.Layer(layers.LayerTypeIPv4)
-	if ipLayer == nil {
-		return Packet{}, fmt.Errorf("nil ip layer")
-	}
-	ip := ipLayer.(*layers.IPv4)
-
-	tcpLayer := packet.Layer(layers.LayerTypeTCP)
-	if tcpLayer == nil {
-		return Packet{}, fmt.Errorf("nil tcp layer") 
-	}
-	tcp := tcpLayer.(*layers.TCP)
-
-	// Print the packet information
-	currPacket := Packet{
-		SourceMac: ethernet.SrcMAC.String(),
-		DestinationMac: ethernet.DstMAC.String(),
-		SourceIP: ip.SrcIP.String(),
-		DestinationIP: ip.DstIP.String(),
-		SourcePort: tcp.SrcPort.String(),
-		DestinationPort: tcp.DstPort.String(),
-	}
-
-	fmt.Printf("Source MAC: %s\n", ethernet.SrcMAC)
-	fmt.Printf("Destination MAC: %s\n", ethernet.DstMAC)
-	fmt.Printf("Source IP: %s\n", ip.SrcIP)
-	fmt.Printf("Destination IP: %s\n", ip.DstIP)
-	fmt.Printf("Source Port: %d\n", tcp.SrcPort)
-	fmt.Printf("Destination Port: %d\n", tcp.DstPort)
-	fmt.Println()
-	return currPacket, nil
+    // Extract packet payload
+    applicationLayer := packet.ApplicationLayer()
+    if applicationLayer != nil {
+        packetInfo.Payload = applicationLayer.Payload()
+        packetInfo.PayloadLenght = len(applicationLayer.Payload())
+    }
+    return &packetInfo
 }

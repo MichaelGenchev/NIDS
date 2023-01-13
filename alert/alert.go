@@ -1,33 +1,43 @@
 package alert
 
 import (
-	// "time"
+	"time"
 
-	// "github.com/google/gopacket"
+	"github.com/google/uuid"
+	"github.com/MichaelGenchev/NIDS/parser"
+	"github.com/MichaelGenchev/NIDS/sbd"
 )
 
 
 type Alerter struct {
+	// storage interface{}
 
 }
 
 //TODO CHANGE SIGNATURE TYPE
-func (a *Alerter) GenerateAlert(packet string, signature string) error{
+func (a *Alerter) GenerateAlert(packet *parser.PacketInfo, signature sbd.Signature) (*Alert, error){
+	requestID, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
 
-	// f := Alert{
-	// 	ID: "testggr",
-	// 	Timestamp: time.Now().Format(time.RFC3339),
-	// 	Severity: 1,
-	// 	SourceIP: "",
-	// }
-	panic("implement me")
+	alert := Alert{
+		ID: int(requestID.ID()),
+		Timestamp: time.Now().Format(time.RFC3339),
+		Protocol: packet.Protocol,
+		Signature: signature,
+		Severity: signature.Severity,
+		SourceIP: packet.SrcIP,
+		DestinationIP: packet.DstIP,
+		SourcePort: packet.SrcIP,
+		DestinationPort: packet.DstIP,
 
+	}
+	return &alert, nil
 }
 
 func (a *Alerter) StoreAlert(alert *Alert) error{
-	panic("g")
+	panic("lf")
 }
 
-func (a *Alerter) SendAlert(alert *Alert)error {
-	panic("implement me")
-}
+

@@ -1,8 +1,10 @@
 package alert
 
+import "github.com/MichaelGenchev/NIDS/sbd"
+
 
 type Alert struct{
-	ID string
+	ID int
 	Timestamp string
 	Severity int
 	SourceIP string
@@ -10,5 +12,5 @@ type Alert struct{
 	SourcePort string
 	DestinationPort string
 	Protocol string
-	
+	Signature sbd.Signature	
 }
