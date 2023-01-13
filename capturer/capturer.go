@@ -4,6 +4,7 @@ package capturer
 import (
 	"fmt"
 	"time"
+	"log"
 
 	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/google/gopacket"
@@ -26,7 +27,10 @@ func Capture() {
 	// Capture packets until the user stops the program
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 	for packet := range packetSource.Packets() {
-		parsedPacked := parser.ParsePacket(packet)
+		parsedPacked, err := parser.ParsePacket(packet)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 		fmt.Println(parsedPacked)
 		// fmt.Println(packet)
 		time.Sleep(10 *time.Second)
