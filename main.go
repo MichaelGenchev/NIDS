@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	// "github.com/MichaelGenchev/NIDS/capturer"
+	"github.com/MichaelGenchev/NIDS/capturer"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -39,6 +39,7 @@ func main() {
 	// Run()
 }
 
-// func Run() {
-// 	capturer.Capture()
-// }
+func Run() {
+	c := capturer.Capturer{}
+	c.Capture()
+}
