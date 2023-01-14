@@ -66,5 +66,12 @@ func (p *Parser)ParsePacket(packet gopacket.Packet) (*ParsedPacket, error) {
 		return nil, err
 	}
 	parsedPacked.ID = int(requestID.ID())
+
+	// Saves the parsedPacket to database
+	err = p.storage.Save(&parsedPacked)
+	if err != nil {
+		return nil, err
+	}
+
 	return &parsedPacked, nil
 }
