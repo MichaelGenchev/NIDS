@@ -1,6 +1,6 @@
 package parser
 
-type PacketInfo struct {
+type ParsedPacket struct {
 	ID            int
 	Timestamp     string
 	SrcIP         string

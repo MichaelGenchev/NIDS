@@ -15,10 +15,18 @@ var (
 	ErrApplicationLayer = errors.New("application layer is nil")
 )
 
-func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
-	var packetInfo PacketInfo
+type Parser struct {
+	storage ParsedPacketStorage 
+}
+
+func NewParser(storage ParsedPacketStorage) *Parser {
+	return &Parser{storage: storage}
+}
+
+func (p *Parser)ParsePacket(packet gopacket.Packet) (*ParsedPacket, error) {
+	var parsedPacked ParsedPacket
 	// Extract packet timestamp
-	packetInfo.Timestamp = packet.Metadata().Timestamp.String()
+	parsedPacked.Timestamp = packet.Metadata().Timestamp.String()
 
 	// Extract packet IP layer
 	ipLayer := packet.Layer(layers.LayerTypeIPv4)
@@ -26,9 +34,9 @@ func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
 		return nil, ErrIPLayer
 	}
 	ip := ipLayer.(*layers.IPv4)
-	packetInfo.SrcIP = ip.SrcIP.String()
-	packetInfo.DstIP = ip.DstIP.String()
-	packetInfo.Protocol = ip.Protocol.String()
+	parsedPacked.SrcIP = ip.SrcIP.String()
+	parsedPacked.DstIP = ip.DstIP.String()
+	parsedPacked.Protocol = ip.Protocol.String()
 
 	// Extract packet transport layer
 	transportLayer := packet.TransportLayer()
@@ -38,12 +46,12 @@ func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
 	switch transportLayer.LayerType() {
 	case layers.LayerTypeTCP:
 		tcp := transportLayer.(*layers.TCP)
-		packetInfo.SrcPort = fmt.Sprintf("%d", tcp.SrcPort)
-		packetInfo.DstPort = fmt.Sprintf("%d", tcp.DstPort)
+		parsedPacked.SrcPort = fmt.Sprintf("%d", tcp.SrcPort)
+		parsedPacked.DstPort = fmt.Sprintf("%d", tcp.DstPort)
 	case layers.LayerTypeUDP:
 		udp := transportLayer.(*layers.UDP)
-		packetInfo.SrcPort = fmt.Sprintf("%d", udp.SrcPort)
-		packetInfo.DstPort = fmt.Sprintf("%d", udp.DstPort)
+		parsedPacked.SrcPort = fmt.Sprintf("%d", udp.SrcPort)
+		parsedPacked.DstPort = fmt.Sprintf("%d", udp.DstPort)
 	}
 
 	// Extract packet payload
@@ -51,12 +59,12 @@ func ParsePacket(packet gopacket.Packet) (*PacketInfo, error) {
 	if applicationLayer == nil {
 		return nil, ErrApplicationLayer
 	}
-	packetInfo.Payload = applicationLayer.Payload()
-	packetInfo.PayloadLenght = len(applicationLayer.Payload())
+	parsedPacked.Payload = applicationLayer.Payload()
+	parsedPacked.PayloadLenght = len(applicationLayer.Payload())
 	requestID, err := uuid.NewUUID()
 	if err != nil {
 		return nil, err
 	}
-	packetInfo.ID = int(requestID.ID())
-	return &packetInfo, nil
+	parsedPacked.ID = int(requestID.ID())
+	return &parsedPacked, nil
 }

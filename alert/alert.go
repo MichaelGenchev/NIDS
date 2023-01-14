@@ -14,7 +14,7 @@ type Alerter struct {
 }
 
 // TODO CHANGE SIGNATURE TYPE
-func (a *Alerter) GenerateAlert(packet *parser.PacketInfo, signature sbd.Signature) (*Alert, error) {
+func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signature) (*Alert, error) {
 	requestID, err := uuid.NewUUID()
 	if err != nil {
 		return nil, err
