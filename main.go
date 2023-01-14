@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/MichaelGenchev/NIDS/capturer"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/MichaelGenchev/NIDS/parser"
+	parsedPacketsRepo "github.com/MichaelGenchev/NIDS/parser/repository"
+	"github.com/google/gopacket"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,23 +24,20 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 	demoDB := client.Database("NIDS")
-	err = demoDB.CreateCollection(ctx, "cats")
+	err = demoDB.CreateCollection(ctx, "parsedPackets")
 	if err != nil {
 		log.Fatal(err)
 	}
-	catsCollection := demoDB.Collection("cats")
-	result, err := catsCollection.InsertOne(ctx, bson.D{
-		{Key:"name", Value: "MOcha"},
-		{Key:"type", Value: "Turkish"},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(result)
-	// Run()
+	ppColection := demoDB.Collection("parsedPackets")
+	
+	repo := parsedPacketsRepo.NewParsedPacketsMongoRepo(ppColection)
+
+	chPackets := make(chan gopacket.Packet, 100)
+	c := capturer.Capturer{}
+	p := parser.NewParser(repo)
+	go p.Listen(chPackets)
+	c.Capture(chPackets)
+	
 }
 
-func Run() {
-	c := capturer.Capturer{}
-	c.Capture()
-}
+

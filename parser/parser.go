@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
@@ -21,6 +22,21 @@ type Parser struct {
 
 func NewParser(storage ParsedPacketStorage) *Parser {
 	return &Parser{storage: storage}
+}
+
+func (p *Parser)Listen(chPackets chan gopacket.Packet) {
+	for {
+		packet := <- chPackets
+		fmt.Println("here")
+
+		parsedPacket, err := p.ParsePacket(packet)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		fmt.Println(parsedPacket.SrcIP)
+		time.Sleep(20 * time.Second)
+	}
 }
 
 func (p *Parser)ParsePacket(packet gopacket.Packet) (*ParsedPacket, error) {

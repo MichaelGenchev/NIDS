@@ -15,8 +15,11 @@ type ParsedPacketMongoRepository struct {
 	collection *mongo.Collection
 }
 
+func NewParsedPacketsMongoRepo(collection *mongo.Collection) *ParsedPacketMongoRepository{
+	return &ParsedPacketMongoRepository{collection: collection}
+}
 
-func (r *ParsedPacketMongoRepository) Save(parsedPacket parser.ParsedPacket) error {
+func (r *ParsedPacketMongoRepository) Save(parsedPacket *parser.ParsedPacket) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10* time.Second)
 	defer cancel()
 
