@@ -44,7 +44,7 @@ func main() {
 
 	chPackets := make(chan gopacket.Packet, 100)
 	chPP := make(chan *parser.ParsedPacket, 100)
-	chDetection := make(chan sbd.DetectionEvent)
+	chDetection := make(chan sbd.DetectionEvent, 100)
 
 	c := capturer.Capturer{}
 	p := parser.NewParser(PPrepo)
@@ -55,5 +55,4 @@ func main() {
 	go sbd.AcceptParsedPackets(chPP, chDetection)
 	go p.Listen(chPackets, chPP)
 	c.Capture(chPackets)
-
 }
