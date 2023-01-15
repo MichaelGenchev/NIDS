@@ -20,9 +20,9 @@ func NewAlerter(storage AlertStorage) *Alerter {
 	}
 }
 
-func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent){
+func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
 	for {
-		event := <- chD
+		event := <-chD
 		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
 		fmt.Println("IN ALERTER")
 		if err != nil {
@@ -32,6 +32,7 @@ func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent){
 		fmt.Println("Stored Alert")
 	}
 }
+
 // TODO CHANGE SIGNATURE TYPE
 func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signature) (*Alert, error) {
 	requestID, err := uuid.NewUUID()

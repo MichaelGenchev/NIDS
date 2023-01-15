@@ -4,37 +4,35 @@ import (
 	"fmt"
 
 	"github.com/MichaelGenchev/NIDS/parser"
-
 )
-
 
 type SignatureBasedDetection struct {
 	storage SignatureStorage
 }
+
 func NewSBD(storage SignatureStorage) *SignatureBasedDetection {
 	return &SignatureBasedDetection{storage: storage}
 }
 func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chD chan DetectionEvent) {
 	for {
-		packet := <- chPP
+		packet := <-chPP
 		fmt.Println("FROM SBD   ", packet.SrcIP)
-		res,signature,  err := sbd.CheckParsedPacket(packet)
+		res, signature, err := sbd.CheckParsedPacket(packet)
 		if err != nil {
 			fmt.Println(err)
 		}
 		if res {
 			fmt.Println("DETECTED")
 			event := DetectionEvent{
-				Signature: signature,
+				Signature:    signature,
 				ParsedPacket: packet,
 			}
 			chD <- event
 		}
-		
+
 	}
 
 }
-
 
 func (sbd *SignatureBasedDetection) CheckParsedPacket(packet *parser.ParsedPacket) (bool, Signature, error) {
 	signatues, err := sbd.storage.FindAll()

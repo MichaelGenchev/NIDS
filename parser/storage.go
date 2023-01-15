@@ -1,6 +1,5 @@
 package parser
 
-
 type ParsedPacketStorage interface {
 	Save(parsedPacket *ParsedPacket) error
 	FindByID(id string) (*ParsedPacket, error)

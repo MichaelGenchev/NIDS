@@ -5,9 +5,9 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
-type Capturer struct {}
+type Capturer struct{}
 
-func (c *Capturer)Capture(chPacket chan gopacket.Packet) {
+func (c *Capturer) Capture(chPacket chan gopacket.Packet) {
 	// Find all available network interfaces
 	interfaces, _ := pcap.FindAllDevs()
 

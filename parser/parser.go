@@ -17,16 +17,16 @@ var (
 )
 
 type Parser struct {
-	storage ParsedPacketStorage 
+	storage ParsedPacketStorage
 }
 
 func NewParser(storage ParsedPacketStorage) *Parser {
 	return &Parser{storage: storage}
 }
 
-func (p *Parser)Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) {
+func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) {
 	for {
-		packet := <- chPackets
+		packet := <-chPackets
 		fmt.Println("here")
 
 		parsedPacket, err := p.ParsePacket(packet)
@@ -39,7 +39,7 @@ func (p *Parser)Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) 
 	}
 }
 
-func (p *Parser)ParsePacket(packet gopacket.Packet) (*ParsedPacket, error) {
+func (p *Parser) ParsePacket(packet gopacket.Packet) (*ParsedPacket, error) {
 	var parsedPacked ParsedPacket
 	// Extract packet timestamp
 	parsedPacked.Timestamp = packet.Metadata().Timestamp.String()

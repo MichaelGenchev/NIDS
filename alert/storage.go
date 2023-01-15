@@ -1,7 +1,5 @@
 package alert
 
-
-
 type AlertStorage interface {
 	Save(alert *Alert) error
 	FindByID(id string) (*Alert, error)
