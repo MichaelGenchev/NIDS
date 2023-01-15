@@ -15,8 +15,13 @@ type AlertMongoRepository struct {
 	collection *mongo.Collection
 }
 
+func NewAlertMongoRepository(collection *mongo.Collection) *AlertMongoRepository {
+	return &AlertMongoRepository{
+		collection: collection,
+	}
+}
 
-func (r *AlertMongoRepository) Save(alert alert.Alert) error {
+func (r *AlertMongoRepository) Save(alert *alert.Alert) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10* time.Second)
 	defer cancel()
 

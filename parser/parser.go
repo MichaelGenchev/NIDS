@@ -24,7 +24,7 @@ func NewParser(storage ParsedPacketStorage) *Parser {
 	return &Parser{storage: storage}
 }
 
-func (p *Parser)Listen(chPackets chan gopacket.Packet) {
+func (p *Parser)Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) {
 	for {
 		packet := <- chPackets
 		fmt.Println("here")
@@ -34,7 +34,7 @@ func (p *Parser)Listen(chPackets chan gopacket.Packet) {
 			fmt.Println(err)
 			continue
 		}
-		fmt.Println(parsedPacket.SrcIP)
+		chPP <- parsedPacket
 		time.Sleep(20 * time.Second)
 	}
 }

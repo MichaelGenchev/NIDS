@@ -1,6 +1,8 @@
 package alert
 
-import "github.com/MichaelGenchev/NIDS/sbd"
+import (
+	"github.com/MichaelGenchev/NIDS/sbd"
+)
 
 type Alert struct {
 	ID              int

@@ -1,6 +1,8 @@
 package alert
 
 import (
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/MichaelGenchev/NIDS/parser"
@@ -9,10 +11,27 @@ import (
 )
 
 type Alerter struct {
-	// storage interface{}
-
+	storage AlertStorage
 }
 
+func NewAlerter(storage AlertStorage) *Alerter {
+	return &Alerter{
+		storage: storage,
+	}
+}
+
+func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent){
+	for {
+		event := <- chD
+		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
+		fmt.Println("IN ALERTER")
+		if err != nil {
+			log.Fatal(err)
+		}
+		a.StoreAlert(alert)
+		fmt.Println("Stored Alert")
+	}
+}
 // TODO CHANGE SIGNATURE TYPE
 func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signature) (*Alert, error) {
 	requestID, err := uuid.NewUUID()
@@ -28,12 +47,12 @@ func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signa
 		Severity:        signature.Severity,
 		SourceIP:        packet.SrcIP,
 		DestinationIP:   packet.DstIP,
-		SourcePort:      packet.SrcIP,
-		DestinationPort: packet.DstIP,
+		SourcePort:      packet.SrcPort,
+		DestinationPort: packet.DstPort,
 	}
 	return &alert, nil
 }
 
 func (a *Alerter) StoreAlert(alert *Alert) error {
-	panic("lf")
+	return a.storage.Save(alert)
 }
