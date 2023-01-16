@@ -29,8 +29,7 @@ func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
 			log.Println(err.Error())
 			continue
 		}
-		a.StoreAlert(alert)
-		fmt.Println("Stored Alert")
+		fmt.Printf("Stored Alert %d", alert.ID)
 	}
 }
 
@@ -52,6 +51,11 @@ func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature *sbd.Sign
 		SourcePort:      packet.SrcPort,
 		DestinationPort: packet.DstPort,
 	}
+	err = a.storage.Save(&alert)
+	if err != nil{
+		return nil, err
+	}
+
 	return &alert, nil
 }
 
