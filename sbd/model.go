@@ -7,7 +7,7 @@ import (
 )
 
 type DetectionEvent struct {
-	Signature    Signature
+	Signature    *Signature
 	ParsedPacket *parser.ParsedPacket
 }
 type Signature struct {

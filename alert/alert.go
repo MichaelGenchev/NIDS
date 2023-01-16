@@ -23,8 +23,8 @@ func NewAlerter(storage AlertStorage) *Alerter {
 func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
 	for {
 		event := <-chD
-		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
 		fmt.Println("IN ALERTER")
+		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -34,7 +34,7 @@ func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
 }
 
 // TODO CHANGE SIGNATURE TYPE
-func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signature) (*Alert, error) {
+func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature *sbd.Signature) (*Alert, error) {
 	requestID, err := uuid.NewUUID()
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature sbd.Signa
 		ID:              int(requestID.ID()),
 		Timestamp:       time.Now().Format(time.RFC3339),
 		Protocol:        packet.Protocol,
-		Signature:       signature,
+		Signature:       *signature,
 		Severity:        signature.Severity,
 		SourceIP:        packet.SrcIP,
 		DestinationIP:   packet.DstIP,

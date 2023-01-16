@@ -16,7 +16,7 @@ func NewSBD(storage SignatureStorage) *SignatureBasedDetection {
 func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chD chan DetectionEvent) {
 	for {
 		packet := <-chPP
-		fmt.Println("FROM SBD   ", packet.SrcIP)
+		fmt.Println("IN SBD")
 		res, signature, err := sbd.CheckParsedPacket(packet)
 		if err != nil {
 			fmt.Println(err)
@@ -34,16 +34,16 @@ func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.Parsed
 
 }
 
-func (sbd *SignatureBasedDetection) CheckParsedPacket(packet *parser.ParsedPacket) (bool, Signature, error) {
+func (sbd *SignatureBasedDetection) CheckParsedPacket(packet *parser.ParsedPacket) (bool, *Signature, error) {
 	signatues, err := sbd.storage.FindAll()
 	if err != nil {
-		return false, Signature{}, err
+		return false, nil, err
 	}
 	for _, signature := range signatues {
 		res := signature.Match(packet)
 		if res {
-			return true, *signature, nil
+			return true, signature, nil
 		}
 	}
-	return false, Signature{}, nil
+	return false, nil, nil
 }
