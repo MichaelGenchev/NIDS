@@ -26,7 +26,8 @@ func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
 		fmt.Println("IN ALERTER")
 		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
+			continue
 		}
 		a.StoreAlert(alert)
 		fmt.Println("Stored Alert")

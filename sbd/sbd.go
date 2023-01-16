@@ -2,6 +2,7 @@ package sbd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/MichaelGenchev/NIDS/parser"
 )
@@ -19,7 +20,8 @@ func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.Parsed
 		fmt.Println("IN SBD")
 		res, signature, err := sbd.CheckParsedPacket(packet)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err.Error())
+			continue
 		}
 		if res {
 			fmt.Println("DETECTED")

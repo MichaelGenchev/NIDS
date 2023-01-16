@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/gopacket"
@@ -27,11 +28,11 @@ func NewParser(storage ParsedPacketStorage) *Parser {
 func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) {
 	for {
 		packet := <-chPackets
-		fmt.Println("here")
+		fmt.Println("IN PARSER")
 
 		parsedPacket, err := p.ParsePacket(packet)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err.Error())
 			continue
 		}
 		chPP <- parsedPacket
