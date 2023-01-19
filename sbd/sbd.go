@@ -22,6 +22,7 @@ func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.Parsed
 		if err != nil {
 			log.Println(err.Error())
 			info := cli.Info{
+				Packet: packet.ID,
 				Captured: true,
 				Parsed: true,
 				Ended: true,

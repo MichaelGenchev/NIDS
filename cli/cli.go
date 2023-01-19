@@ -73,11 +73,12 @@ func (cli *CLI) AcceptInfo(){
 
 func (cli *CLI)PrintInfo(info Info){
 	infoString := fmt.Sprintf(`
+Packet: %d
 Captured: %t
 Parsed: %t
 SBD: %t
 Alerted: %t
-	`, info.Captured, info.Parsed, info.SBD, info.Alerted)
+	`, info.Packet, info.Captured, info.Parsed, info.SBD, info.Alerted)
 
 	fmt.Println(infoString)
 }

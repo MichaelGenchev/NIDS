@@ -42,7 +42,7 @@ func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket,
 			continue
 		}
 		chPP <- parsedPacket
-		time.Sleep(20 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }
 

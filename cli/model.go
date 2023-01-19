@@ -2,7 +2,7 @@ package cli
 
 
 type Info struct {
-	Packet string
+	Packet int
 	Ended bool
 	Captured bool
 	Parsed bool
