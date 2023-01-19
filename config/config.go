@@ -1,6 +1,9 @@
 package config
 
-import "errors"
+import (
+	"errors"
+	"github.com/MichaelGenchev/NIDS/cli"
+)
 
 var (
 	ErrEmptyNetworkInterface = errors.New("network interface is empty")
@@ -10,10 +13,10 @@ var (
 type Config struct {
 	NetworkInterface string
 	MongoURI         string
-	CLIChannel       chan string
+	CLIChannel       chan cli.Info
 }
 
-func LoadConfig(networkInterface, mongoURI string, cliCh chan string) (*Config, error) {
+func LoadConfig(networkInterface, mongoURI string, cliCh chan cli.Info) (*Config, error) {
 	if networkInterface == "" {
 		return nil, ErrEmptyNetworkInterface
 	}

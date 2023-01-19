@@ -13,7 +13,7 @@ import (
 type CLI struct {
 	InterfaceFlag string
 	MongoURI      string
-	Channel       chan string
+	Channel       chan Info
 }
 
 // printWelcome function to print a welcome message to the console
@@ -59,6 +59,13 @@ func ParseFlags() *CLI {
 	return &CLI{
 		InterfaceFlag: interfaceFlag,
 		MongoURI:      mongoURI,
-		Channel:       make(chan string, 100),
+		Channel:       make(chan Info, 100),
+	}
+}
+func (cli *CLI) AcceptInfo() error {
+	for {
+		info := <- cli.Channel
+		fmt.Println(info)
+
 	}
 }
