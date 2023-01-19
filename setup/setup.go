@@ -6,9 +6,9 @@ import (
 
 	"github.com/MichaelGenchev/NIDS/alert"
 	"github.com/MichaelGenchev/NIDS/capturer"
+	"github.com/MichaelGenchev/NIDS/config"
 	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/MichaelGenchev/NIDS/sbd"
-	"github.com/MichaelGenchev/NIDS/config"
 
 	alertsRepo "github.com/MichaelGenchev/NIDS/alert/repository"
 	parsedPacketsRepo "github.com/MichaelGenchev/NIDS/parser/repository"
