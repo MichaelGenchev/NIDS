@@ -52,7 +52,7 @@ func (a *Alerter) GenerateAlert(packet *parser.ParsedPacket, signature *sbd.Sign
 		DestinationPort: packet.DstPort,
 	}
 	err = a.storage.Save(&alert)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 

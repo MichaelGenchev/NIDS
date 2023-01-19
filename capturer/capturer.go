@@ -7,7 +7,7 @@ import (
 
 type Capturer struct{}
 
-func (c *Capturer) Capture(chPacket chan gopacket.Packet) {
+func (c *Capturer) Capture(chPacket chan gopacket.Packet, networkInterface string) {
 	// Find all available network interfaces
 	interfaces, _ := pcap.FindAllDevs()
 
