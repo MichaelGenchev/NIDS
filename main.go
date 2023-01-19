@@ -8,16 +8,10 @@ import (
 	"github.com/MichaelGenchev/NIDS/setup"
 )
 
-
-var mongoURI = "mongodb://localhost:27017"
 func main() {
-	cli.ParseFlags()
+	cli := cli.ParseFlags()
 
-	if *cli.Verbose{
-		cli.PrintUsage()
-		return 
-	}
-	cfg, err := config.LoadConfig("en0", mongoURI)
+	cfg, err := config.LoadConfig(cli.InterfaceFlag, cli.MongoURI)
 	if err != nil {
 		log.Fatal(err)
 	}
