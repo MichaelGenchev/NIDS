@@ -41,9 +41,9 @@ func Start(config *config.Config) {
 	PPrepo := parsedPacketsRepo.NewParsedPacketsMongoRepo(ppColection)
 	Srepo := sbdRepo.NewSignatureStorage(sCollection)
 
-	chPackets := make(chan gopacket.Packet, 100)
-	chPP := make(chan *parser.ParsedPacket, 100)
-	chDetection := make(chan sbd.DetectionEvent, 100)
+	chPackets := make(chan gopacket.Packet, 100000)
+	chPP := make(chan *parser.ParsedPacket, 100000)
+	chDetection := make(chan sbd.DetectionEvent, 100000)
 
 	c := capturer.Capturer{}
 	p := parser.NewParser(PPrepo)

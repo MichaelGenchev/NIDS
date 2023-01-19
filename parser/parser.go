@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/MichaelGenchev/NIDS/cli"
 
@@ -36,13 +35,12 @@ func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket,
 			log.Println(err.Error())
 			info := cli.Info{
 				Captured: true,
-				Ended: true,
+				Ended:    true,
 			}
 			chInfo <- info
 			continue
 		}
 		chPP <- parsedPacket
-		time.Sleep(3 * time.Second)
 	}
 }
 

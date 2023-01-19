@@ -29,12 +29,12 @@ func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent, chInfo c
 			continue
 		}
 		info := cli.Info{
-			Packet: event.ParsedPacket.ID,
+			Packet:   event.ParsedPacket.ID,
 			Captured: true,
-			Parsed: true,
-			SBD: true,
-			Alerted: true,
-			Ended: true,
+			Parsed:   true,
+			SBD:      true,
+			Alerted:  true,
+			Ended:    true,
 		}
 		chInfo <- info
 	}

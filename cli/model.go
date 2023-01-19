@@ -1,11 +1,10 @@
 package cli
 
-
 type Info struct {
-	Packet int
-	Ended bool
+	Packet   int
+	Ended    bool
 	Captured bool
-	Parsed bool
-	SBD bool
-	Alerted bool
+	Parsed   bool
+	SBD      bool
+	Alerted  bool
 }

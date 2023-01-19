@@ -3,9 +3,8 @@ package sbd
 import (
 	"log"
 
-	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/MichaelGenchev/NIDS/cli"
-
+	"github.com/MichaelGenchev/NIDS/parser"
 )
 
 type SignatureBasedDetection struct {
@@ -22,10 +21,10 @@ func (sbd *SignatureBasedDetection) AcceptParsedPackets(chPP chan *parser.Parsed
 		if err != nil {
 			log.Println(err.Error())
 			info := cli.Info{
-				Packet: packet.ID,
+				Packet:   packet.ID,
 				Captured: true,
-				Parsed: true,
-				Ended: true,
+				Parsed:   true,
+				Ended:    true,
 			}
 			chInfo <- info
 			continue
