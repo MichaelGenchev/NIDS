@@ -8,10 +8,11 @@ import (
 	"github.com/MichaelGenchev/NIDS/setup"
 )
 
+// Make CLI channel to send information to the CLI interface
 func main() {
 	cli := cli.ParseFlags()
 
-	cfg, err := config.LoadConfig(cli.InterfaceFlag, cli.MongoURI)
+	cfg, err := config.LoadConfig(cli.InterfaceFlag, cli.MongoURI, cli.Channel)
 	if err != nil {
 		log.Fatal(err)
 	}

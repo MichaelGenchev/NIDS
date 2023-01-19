@@ -13,6 +13,7 @@ import (
 type CLI struct {
 	InterfaceFlag string
 	MongoURI      string
+	Channel       chan string
 }
 
 // printWelcome function to print a welcome message to the console
@@ -22,7 +23,7 @@ func printWelcome() {
 ░▒█░▄▄░▒█░░▒█░░░▒█▒█▒█░▒█░░▒█░▒█░░▀▀▀▄▄
 ░▒█▄▄▀░▒█▄▄▄█░░░▒█░░▀█░▄█▄░▒█▄▄█░▒█▄▄▄█
     `
-    welcome = strings.TrimSpace(welcome)
+	welcome = strings.TrimSpace(welcome)
 	fmt.Println()
 	fmt.Println()
 	color.Green(welcome)
@@ -58,5 +59,6 @@ func ParseFlags() *CLI {
 	return &CLI{
 		InterfaceFlag: interfaceFlag,
 		MongoURI:      mongoURI,
+		Channel:       make(chan string, 100),
 	}
 }

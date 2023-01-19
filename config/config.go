@@ -10,9 +10,10 @@ var (
 type Config struct {
 	NetworkInterface string
 	MongoURI         string
+	CLIChannel       chan string
 }
 
-func LoadConfig(networkInterface, mongoURI string) (*Config, error) {
+func LoadConfig(networkInterface, mongoURI string, cliCh chan string) (*Config, error) {
 	if networkInterface == "" {
 		return nil, ErrEmptyNetworkInterface
 	}
@@ -22,5 +23,6 @@ func LoadConfig(networkInterface, mongoURI string) (*Config, error) {
 	return &Config{
 		NetworkInterface: networkInterface,
 		MongoURI:         mongoURI,
+		CLIChannel:       cliCh,
 	}, nil
 }
