@@ -50,8 +50,8 @@ func Start(config *config.Config) {
 	sbd := sbd.NewSBD(Srepo)
 	alerter := alert.NewAlerter(AlertsRepo)
 
-	go alerter.ListenForDetectionEvents(chDetection)
-	go sbd.AcceptParsedPackets(chPP, chDetection)
-	go p.Listen(chPackets, chPP)
+	go alerter.ListenForDetectionEvents(chDetection, config.CLIChannel)
+	go sbd.AcceptParsedPackets(chPP, chDetection, config.CLIChannel)
+	go p.Listen(chPackets, chPP, config.CLIChannel)
 	c.Capture(chPackets, config.NetworkInterface)
 }

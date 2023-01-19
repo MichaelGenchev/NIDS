@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/MichaelGenchev/NIDS/cli"
+
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/uuid"
@@ -25,14 +27,18 @@ func NewParser(storage ParsedPacketStorage) *Parser {
 	return &Parser{storage: storage}
 }
 
-func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket) {
+func (p *Parser) Listen(chPackets chan gopacket.Packet, chPP chan *ParsedPacket, chInfo chan cli.Info) {
 	for {
 		packet := <-chPackets
-		fmt.Println("IN PARSER")
 
 		parsedPacket, err := p.ParsePacket(packet)
 		if err != nil {
 			log.Println(err.Error())
+			info := cli.Info{
+				Captured: true,
+				Ended: true,
+			}
+			chInfo <- info
 			continue
 		}
 		chPP <- parsedPacket

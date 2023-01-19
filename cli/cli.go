@@ -62,10 +62,23 @@ func ParseFlags() *CLI {
 		Channel:       make(chan Info, 100),
 	}
 }
-func (cli *CLI) AcceptInfo() error {
+func (cli *CLI) AcceptInfo(){
 	for {
 		info := <- cli.Channel
-		fmt.Println(info)
-
+		if info.Ended {
+			cli.PrintInfo(info)
+		}
 	}
 }
+
+func (cli *CLI)PrintInfo(info Info){
+	infoString := fmt.Sprintf(`
+Captured: %t
+Parsed: %t
+SBD: %t
+Alerted: %t
+	`, info.Captured, info.Parsed, info.SBD, info.Alerted)
+
+	fmt.Println(infoString)
+}
+

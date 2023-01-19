@@ -1,10 +1,10 @@
 package alert
 
 import (
-	"fmt"
 	"log"
 	"time"
 
+	"github.com/MichaelGenchev/NIDS/cli"
 	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/MichaelGenchev/NIDS/sbd"
 	"github.com/google/uuid"
@@ -20,16 +20,22 @@ func NewAlerter(storage AlertStorage) *Alerter {
 	}
 }
 
-func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent) {
+func (a *Alerter) ListenForDetectionEvents(chD chan sbd.DetectionEvent, chInfo chan cli.Info) {
 	for {
 		event := <-chD
-		fmt.Println("IN ALERTER")
-		alert, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
+		_, err := a.GenerateAlert(event.ParsedPacket, event.Signature)
 		if err != nil {
 			log.Println(err.Error())
 			continue
 		}
-		fmt.Printf("Stored Alert %d", alert.ID)
+		info := cli.Info{
+			Captured: true,
+			Parsed: true,
+			SBD: true,
+			Alerted: true,
+			Ended: true,
+		}
+		chInfo <- info
 	}
 }
 
