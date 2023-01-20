@@ -41,7 +41,7 @@ func getNetworkInterface() string {
 
 	// Print the name of each interface
 	for indx, intf := range interfaces {
-		interfacesDict[indx + 1] = intf.Name
+		interfacesDict[indx+1] = intf.Name
 	}
 	reader := bufio.NewReader(os.Stdin)
 	color.Cyan("Enter the network interface you want to use: ")
@@ -50,7 +50,7 @@ func getNetworkInterface() string {
 	}
 	interfaceFlag, _ := reader.ReadString('\n')
 	interfaceFlag = strings.TrimSpace(interfaceFlag)
-	
+
 	number, err := strconv.Atoi(interfaceFlag)
 	if err != nil {
 		return getNetworkInterface()
@@ -62,7 +62,9 @@ func getNetworkInterface() string {
 	}
 	return intf
 }
-const mongoURIPattern = `^mongodb:\/\/([A-Za-z0-9-_]+):?([A-Za-z0-9-_]+)?@([A-Za-z0-9-_]+):?([0-9]+)?\/([A-Za-z0-9-_]+)?\??([A-Za-z0-9-_=&]+)?$`
+
+const mongoURIPattern = `(mongodb:\/\/)([A-Za-z0-9-_]+:?[A-Za-z0-9-_]*@)?(([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]):[0-9]+`
+
 // getMongoURI function to ask the user for the MongoDB URI
 func getMongoURI() string {
 	reader := bufio.NewReader(os.Stdin)
@@ -75,10 +77,9 @@ func getMongoURI() string {
 	mongoURI = strings.TrimSpace(mongoURI)
 	if mongoURI == "" {
 		mongoURI = "mongodb://localhost:27017"
-		return mongoURI
 	}
 	matched, _ := regexp.MatchString(mongoURIPattern, mongoURI)
-	if !matched{
+	if !matched {
 		color.Cyan("Wrong URI Pattern")
 		return getMongoURI()
 

@@ -10,6 +10,7 @@ import (
 )
 
 var uri = flag.String("uri", "mongodb://localhost:27017", "MongoDB URI")
+
 func main() {
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(*uri))
