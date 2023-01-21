@@ -1,51 +1,34 @@
 package abd
 
 import (
-	"fmt"
-	"log"
-	"strconv"
-	"time"
-
 	"github.com/MichaelGenchev/NIDS/parser"
-	"github.com/e-XpertSolutions/go-iforest/iforest"
+	// "github.com/e-XpertSolutions/go-iforest/iforest"
 )
 
 type ABD struct {
 	storage parser.ParsedPacketStorage
 }
 
-func (abd *ABD) Start() {
-	packets, err := abd.storage.FindAll()
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
+type PacketSet []*parser.ParsedPacket
 
-	trainData := [][]float64{}
-	for _, p := range packets {
-		floatSrcIP, _ := strconv.ParseFloat(p.SrcIP, 64)
-		floatDstIP, _ := strconv.ParseFloat(p.DstIP, 64)
-		floatSrcPort, _ := strconv.ParseFloat(p.SrcPort, 64)
-		floatDstPort, _ := strconv.ParseFloat(p.DstPort, 64)
-		t, err := time.Parse(time.RFC3339, p.Timestamp)
-		if err != nil {
-			fmt.Println(err)
-			return
+func (abd *ABD) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chTraining, chTesting, chPredicting chan PacketSet) {
+	var packetSet PacketSet
+	for {
+		pp := <-chPP
+		if len(packetSet) == 100 {
+			chTraining <- packetSet[:50]
+			chTesting <- packetSet[50:75]
+			chPredicting <- packetSet[75:]
+			packetSet = nil
+			continue
 		}
-		unixTime := float64(t.Unix())
-
-		trainData = append(trainData, []float64{floatSrcIP, floatDstIP, floatSrcPort, floatDstPort, unixTime, float64(p.PayloadLenght)})
+		packetSet = append(packetSet, pp)
 	}
-
-	// input parameters
-	treesNumber := 100
-	subsampleSize := 256
-	outliersRatio := 0.01
-	// routinesNumber := 10
-
-	//model initialization
-	forest := iforest.NewForest(treesNumber, subsampleSize, outliersRatio)
-	forest.Train(trainData)
-	
-	//TODO ADD CONCURRENCY
 }
+
+// TODO PLAN
+
+// 1. Train the Isolation tree with data from the database (7k + packets in there)
+// 2. have two subsets of one packetSets used for training and predicting.
+// 3. Use waitgroup to wait for training and testing, before Predicting
+// 4. Connect ABD to the rest of NIDS
