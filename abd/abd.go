@@ -46,4 +46,6 @@ func (abd *ABD) Start() {
 	//model initialization
 	forest := iforest.NewForest(treesNumber, subsampleSize, outliersRatio)
 	forest.Train(trainData)
+	
+	//TODO ADD CONCURRENCY
 }
