@@ -1,11 +1,15 @@
 package abd
 
 import (
+	"sync"
+
 	"github.com/MichaelGenchev/NIDS/parser"
-	// "github.com/e-XpertSolutions/go-iforest/iforest"
+	"github.com/e-XpertSolutions/go-iforest/iforest"
 )
 
 type ABD struct {
+	forest  *iforest.Forest
+	wg      *sync.WaitGroup
 	storage parser.ParsedPacketStorage
 }
 
