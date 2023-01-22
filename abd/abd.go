@@ -66,6 +66,9 @@ func (abd *ABD) TrainForestFromMongoDB(){
 }
 
 func (abd *ABD) TestForest(chTesting chan PacketSet){
+
+}
+func (abd *ABD) PredictData(chPredicting chan PacketSet){
 	
 }
 // TODO PLAN
