@@ -9,7 +9,11 @@ import (
 	"github.com/MichaelGenchev/NIDS/parser"
 	"github.com/e-XpertSolutions/go-iforest/iforest"
 )
-
+const (
+	treesNumber = 100
+	subsamplingSize = 256
+	anomalyRatio = 0.01
+)
 type ABD struct {
 	forest  *iforest.Forest
 	wg      *sync.WaitGroup
@@ -17,6 +21,25 @@ type ABD struct {
 }
 
 type PacketSet []*parser.ParsedPacket
+
+
+func NewABD(storage parser.ParsedPacketStorage) *ABD {
+	forest := iforest.NewForest(treesNumber, subsamplingSize, anomalyRatio)
+	return &ABD{
+		forest: forest,
+		storage: storage,
+		wg: &sync.WaitGroup{},
+	}
+
+}
+
+func (abd *ABD) Run() {
+	// make channels
+	// run training, testing and predict
+	// use waitGroup to wait for training and testing, Predict needs to be ran after these two are done.
+	// check if it predicts anomaly
+	// create alert if there is anomaly
+}
 
 func (abd *ABD) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chTesting, chPredicting chan PacketSet) {
 	var packetSet PacketSet
@@ -69,7 +92,7 @@ func (abd *ABD) TestForest(chTesting chan PacketSet){
 
 }
 func (abd *ABD) PredictData(chPredicting chan PacketSet){
-	
+
 }
 // TODO PLAN
 
