@@ -55,25 +55,6 @@ func (abd *ABD) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chTesting, c
 	}
 }
 
-func (abd *ABD) ParsePacketsToMatrix(packets []*parser.ParsedPacket) [][]float64 {
-	trainData := [][]float64{}
-
-	for _, p := range packets {
-		floatSrcIP, _ := strconv.ParseFloat(p.SrcIP, 64)
-		floatDstIP, _ := strconv.ParseFloat(p.DstIP, 64)
-		floatSrcPort, _ := strconv.ParseFloat(p.SrcPort, 64)
-		floatDstPort, _ := strconv.ParseFloat(p.DstPort, 64)
-		t, err := time.Parse(time.RFC3339, p.Timestamp)
-		if err != nil {
-			log.Println("Error parsing time: ", err)
-			return nil
-		}
-		unixTime := float64(t.Unix())
-		trainData = append(trainData, []float64{floatSrcIP, floatDstIP, floatSrcPort, 
-			floatDstPort, unixTime})
-	}
-	return trainData
-}
 
 func (abd *ABD) TrainForestFromMongoDB(signalChTrain chan bool){
 	for {
@@ -84,7 +65,7 @@ func (abd *ABD) TrainForestFromMongoDB(signalChTrain chan bool){
 			continue
 		}
 		trainData := abd.ParsePacketsToMatrix(packets)
-
+		
 		abd.forest.Train(trainData)
 		signalChTrain <- true
 	}
@@ -107,14 +88,14 @@ func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalCh
 			continue
 		}
 		predictingSet := <- chPredicting
-
+		
 		predictData := abd.ParsePacketsToMatrix(predictingSet)
-
+		
 		a, b, err := abd.forest.Predict(predictData)
 		if err != nil{
 			log.Println(err)
 		}
-
+		
 		//continue ...
 	}
 }
@@ -124,3 +105,23 @@ func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalCh
 // 2. have two subsets of one packetSets used for training and predicting.
 // 3. Use waitgroup to wait for training and testing, before Predicting, see how to train and test inside for cycle in goroutine
 // 4. Connect ABD to the rest of NIDS
+
+func (abd *ABD) ParsePacketsToMatrix(packets []*parser.ParsedPacket) [][]float64 {
+	trainData := [][]float64{}
+
+	for _, p := range packets {
+		floatSrcIP, _ := strconv.ParseFloat(p.SrcIP, 64)
+		floatDstIP, _ := strconv.ParseFloat(p.DstIP, 64)
+		floatSrcPort, _ := strconv.ParseFloat(p.SrcPort, 64)
+		floatDstPort, _ := strconv.ParseFloat(p.DstPort, 64)
+		t, err := time.Parse(time.RFC3339, p.Timestamp)
+		if err != nil {
+			log.Println("Error parsing time: ", err)
+			return nil
+		}
+		unixTime := float64(t.Unix())
+		trainData = append(trainData, []float64{floatSrcIP, floatDstIP, floatSrcPort, 
+			floatDstPort, unixTime})
+	}
+	return trainData
+}
