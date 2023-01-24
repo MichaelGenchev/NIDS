@@ -89,9 +89,27 @@ func (abd *ABD) TrainForestFromMongoDB(){
 }
 
 func (abd *ABD) TestForest(chTesting chan PacketSet){
+	for {
+		trainingSet := <- chTesting
+		
+		testData := abd.ParsePacketsToMatrix(trainingSet)
+		abd.forest.Test(testData)
+	}
 
 }
 func (abd *ABD) PredictData(chPredicting chan PacketSet){
+	for {
+		predictingSet := <- chPredicting
+
+		predictData := abd.ParsePacketsToMatrix(predictingSet)
+
+		a, b, err := abd.forest.Predict(predictData)
+		if err != nil{
+			log.Println(err)
+		}
+
+		//continue ...
+	}
 
 }
 // TODO PLAN
