@@ -56,35 +56,43 @@ func (abd *ABD) AcceptParsedPackets(chPP chan *parser.ParsedPacket, chTesting, c
 }
 
 
+var onceTrain sync.Once
+var onceTest sync.Once
+
 func (abd *ABD) TrainForestFromMongoDB(signalChTrain chan bool){
-	for {
-		// get packets from database
-		packets, err := abd.storage.FindAll()
-		if err != nil {
-			log.Println("Error getting new packets: ", err)
-			continue
+	onceTrain.Do(func() {
+		for {
+			// get packets from database
+			packets, err := abd.storage.FindAll()
+			if err != nil {
+				log.Println("Error getting new packets: ", err)
+				continue
+			}
+			trainData := abd.ParsePacketsToMatrix(packets)
+			
+			abd.forest.Train(trainData)
+			signalChTrain <- true
 		}
-		trainData := abd.ParsePacketsToMatrix(packets)
-		
-		abd.forest.Train(trainData)
-		signalChTrain <- true
-	}
+	})
 }
 
 func (abd *ABD) TestForest(chTesting chan PacketSet, signalChTest chan bool){
-	for {
-		trainingSet := <- chTesting
-		
-		testData := abd.ParsePacketsToMatrix(trainingSet)
-		abd.forest.Test(testData)
-		signalChTest <- true
-	}
+	onceTest.Do(func() {
+		for {
+			trainingSet := <- chTesting
+			
+			testData := abd.ParsePacketsToMatrix(trainingSet)
+			abd.forest.Test(testData)
+			signalChTest <- true
+		}
+	})
 }
+
 func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalChTest chan bool){
 	for {
 		isTrained := <- signalChTrain
-		isTestsed := <- signalChTest
-		if  !isTrained && !isTestsed {
+		isTested := <- signalChTest
+		if  !isTrained && !isTested {
 			continue
 		}
 		predictingSet := <- chPredicting
@@ -99,6 +107,7 @@ func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalCh
 		//continue ...
 	}
 }
+
 // TODO PLAN
 
 // 1. Train the Isolation tree with data from the database (7k + packets in there)
