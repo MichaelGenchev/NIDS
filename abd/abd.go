@@ -117,7 +117,6 @@ func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalCh
 
 		//continue ...
 	}
-
 }
 // TODO PLAN
 
