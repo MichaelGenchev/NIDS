@@ -97,7 +97,6 @@ func (abd *ABD) TestForest(chTesting chan PacketSet){
 		abd.forest.Test(testData)
 		defer abd.wg.Done()
 	}
-
 }
 func (abd *ABD) PredictData(chPredicting chan PacketSet){
 	for {
