@@ -75,7 +75,7 @@ func (abd *ABD) ParsePacketsToMatrix(packets []*parser.ParsedPacket) [][]float64
 	return trainData
 }
 
-func (abd *ABD) TrainForestFromMongoDB(){
+func (abd *ABD) TrainForestFromMongoDB(signalChTrain chan bool){
 	for {
 		// get packets from database
 		packets, err := abd.storage.FindAll()
@@ -86,21 +86,26 @@ func (abd *ABD) TrainForestFromMongoDB(){
 		trainData := abd.ParsePacketsToMatrix(packets)
 
 		abd.forest.Train(trainData)
-		defer abd.wg.Done()
+		signalChTrain <- true
 	}
 }
 
-func (abd *ABD) TestForest(chTesting chan PacketSet){
+func (abd *ABD) TestForest(chTesting chan PacketSet, signalChTest chan bool){
 	for {
 		trainingSet := <- chTesting
 		
 		testData := abd.ParsePacketsToMatrix(trainingSet)
 		abd.forest.Test(testData)
-		defer abd.wg.Done()
+		signalChTest <- true
 	}
 }
-func (abd *ABD) PredictData(chPredicting chan PacketSet){
+func (abd *ABD) PredictData(chPredicting chan PacketSet, signalChTrain, signalChTest chan bool){
 	for {
+		isTrained := <- signalChTrain
+		isTestsed := <- signalChTest
+		if  !isTrained && !isTestsed {
+			continue
+		}
 		predictingSet := <- chPredicting
 
 		predictData := abd.ParsePacketsToMatrix(predictingSet)
