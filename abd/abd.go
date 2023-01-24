@@ -77,6 +77,7 @@ func (abd *ABD) ParsePacketsToMatrix(packets []*parser.ParsedPacket) [][]float64
 
 func (abd *ABD) TrainForestFromMongoDB(){
 	for {
+		// get packets from database
 		packets, err := abd.storage.FindAll()
 		if err != nil {
 			log.Println("Error getting new packets: ", err)
