@@ -118,5 +118,5 @@ func (abd *ABD) PredictData(chPredicting chan PacketSet){
 
 // 1. Train the Isolation tree with data from the database (7k + packets in there)
 // 2. have two subsets of one packetSets used for training and predicting.
-// 3. Use waitgroup to wait for training and testing, before Predicting
+// 3. Use waitgroup to wait for training and testing, before Predicting, see how to train and test inside for cycle in goroutine
 // 4. Connect ABD to the rest of NIDS
