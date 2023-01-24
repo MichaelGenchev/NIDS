@@ -85,6 +85,7 @@ func (abd *ABD) TrainForestFromMongoDB(){
 		trainData := abd.ParsePacketsToMatrix(packets)
 
 		abd.forest.Train(trainData)
+		defer abd.wg.Done()
 	}
 }
 
@@ -94,6 +95,7 @@ func (abd *ABD) TestForest(chTesting chan PacketSet){
 		
 		testData := abd.ParsePacketsToMatrix(trainingSet)
 		abd.forest.Test(testData)
+		defer abd.wg.Done()
 	}
 
 }
